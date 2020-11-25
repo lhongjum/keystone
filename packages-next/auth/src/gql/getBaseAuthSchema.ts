@@ -79,8 +79,7 @@ export function getBaseAuthSchema({
         },
       },
       Query: {
-        async authenticatedItem(root: any, args: any, context: Context) {
-          const { session, lists } = context;
+        async authenticatedItem(root: any, args: {}, { session, lists }: Context) {
           if (session) {
             const item = await lists[session.listKey].findOne({ where: { id: session.itemId } });
             return item || null;
@@ -89,8 +88,8 @@ export function getBaseAuthSchema({
         },
       },
       AuthenticatedItem: {
-        __resolveType(rootVal: any, context: Context) {
-          return context.session?.listKey;
+        __resolveType(rootVal: any, { session }: Context) {
+          return session?.listKey;
         },
       },
       // TODO: Is this the preferred approach for this?
