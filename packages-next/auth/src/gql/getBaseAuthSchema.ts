@@ -47,7 +47,7 @@ export function getBaseAuthSchema({
       Mutation: {
         async [gqlNames.authenticateItemWithPassword](
           root: any,
-          args: Record<string, string>,
+          args: { [_secretField: string]: string },
           context: Context
         ) {
           const list = context.keystone.lists[listKey];

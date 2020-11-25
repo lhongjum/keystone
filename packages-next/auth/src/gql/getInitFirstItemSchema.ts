@@ -34,7 +34,11 @@ export function getInitFirstItemSchema({
       `,
     resolvers: {
       Mutation: {
-        async [gqlNames.createInitialItem](rootVal: any, { data }: any, context: Context) {
+        async [gqlNames.createInitialItem](
+          rootVal: any,
+          { data }: Record<string, any>,
+          context: Context
+        ) {
           const itemAPI = context.lists[listKey];
           const count = await itemAPI.count({});
           if (count !== 0) {

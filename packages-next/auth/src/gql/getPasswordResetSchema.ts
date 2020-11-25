@@ -61,7 +61,7 @@ export function getPasswordResetSchema({
       Mutation: {
         async [gqlNames.sendItemPasswordResetLink](
           root: any,
-          args: Record<string, string>,
+          args: { [_identityField: string]: string },
           context: Context
         ) {
           const list = context.keystone.lists[listKey];
@@ -99,7 +99,7 @@ export function getPasswordResetSchema({
         },
         async [gqlNames.redeemItemPasswordResetToken](
           root: any,
-          args: Record<string, string>,
+          args: { _token: string; [_identityField: string]: string },
           context: Context
         ) {
           const list = context.keystone.lists[listKey];
@@ -145,7 +145,7 @@ export function getPasswordResetSchema({
       Query: {
         async [gqlNames.validateItemPasswordResetToken](
           root: any,
-          args: Record<string, string>,
+          args: { _token: string; [_identityField: string]: string },
           context: Context
         ) {
           const list = context.keystone.lists[listKey];

@@ -98,7 +98,7 @@ export function getMagicAuthLinkSchema({
         },
         async [gqlNames.redeemItemMagicAuthToken](
           root: any,
-          args: Record<string, string>,
+          args: { _token: string, [_identityField: string]: string },
           context: Context
         ) {
           const list = context.keystone.lists[listKey];
