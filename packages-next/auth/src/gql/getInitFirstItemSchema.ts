@@ -1,4 +1,4 @@
-import { AuthGqlNames } from '../types';
+import { AuthGqlNames, Context } from '../types';
 
 export function getInitFirstItemSchema({
   listKey,
@@ -34,7 +34,7 @@ export function getInitFirstItemSchema({
       `,
     resolvers: {
       Mutation: {
-        async [gqlNames.createInitialItem](rootVal: any, { data }: any, context: any) {
+        async [gqlNames.createInitialItem](rootVal: any, { data }: any, context: Context) {
           const itemAPI = context.lists[listKey];
           const count = await itemAPI.count({});
           if (count !== 0) {

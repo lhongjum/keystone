@@ -1,5 +1,4 @@
-import { AuthGqlNames } from '../types';
-
+import { AuthGqlNames, Context } from '../types';
 import { validateSecret } from '../lib/validateSecret';
 import { getPasswordAuthError } from '../lib/getErrorMessage';
 
@@ -46,7 +45,11 @@ export function getBaseAuthSchema({
     `,
     resolvers: {
       Mutation: {
-        async [gqlNames.authenticateItemWithPassword](root: any, args: any, context: any) {
+        async [gqlNames.authenticateItemWithPassword](
+          root: any,
+          args: Record<string, string>,
+          context: Context
+        ) {
           const list = context.keystone.lists[listKey];
           const itemAPI = context.lists[listKey];
           const result = await validateSecret(
@@ -76,8 +79,9 @@ export function getBaseAuthSchema({
         },
       },
       Query: {
-        async authenticatedItem(root: any, args: any, { session, lists }: any) {
-          if (typeof session?.itemId === 'string' && typeof session.listKey === 'string') {
+        async authenticatedItem(root: any, args: any, context: Context) {
+          const { session, lists } = context;
+          if (session) {
             const item = await lists[session.listKey].findOne({ where: { id: session.itemId } });
             return item || null;
           }
@@ -85,8 +89,8 @@ export function getBaseAuthSchema({
         },
       },
       AuthenticatedItem: {
-        __resolveType(rootVal: any, { session }: any) {
-          return session?.listKey;
+        __resolveType(rootVal: any, context: Context) {
+          return context.session?.listKey;
         },
       },
       // TODO: Is this the preferred approach for this?

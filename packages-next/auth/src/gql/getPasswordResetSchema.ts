@@ -1,4 +1,4 @@
-import { AuthGqlNames, AuthTokenTypeConfig } from '../types';
+import { AuthGqlNames, AuthTokenTypeConfig, Context } from '../types';
 
 import { updateAuthToken } from '../lib/updateAuthToken';
 import { validateAuthToken } from '../lib/validateAuthToken';
@@ -59,7 +59,11 @@ export function getPasswordResetSchema({
     `,
     resolvers: {
       Mutation: {
-        async [gqlNames.sendItemPasswordResetLink](root: any, args: any, context: any) {
+        async [gqlNames.sendItemPasswordResetLink](
+          root: any,
+          args: Record<string, string>,
+          context: Context
+        ) {
           const list = context.keystone.lists[listKey];
           const itemAPI = context.lists[listKey];
           const tokenType = 'passwordReset';
@@ -81,7 +85,7 @@ export function getPasswordResetSchema({
             // Save the token and related info back to the item
             const { token, itemId } = result;
             await itemAPI.updateOne({
-              id: itemId,
+              id: itemId.toString(),
               data: {
                 [`${tokenType}Token`]: token,
                 [`${tokenType}IssuedAt`]: new Date().toISOString(),
@@ -93,7 +97,11 @@ export function getPasswordResetSchema({
           }
           return null;
         },
-        async [gqlNames.redeemItemPasswordResetToken](root: any, args: any, context: any) {
+        async [gqlNames.redeemItemPasswordResetToken](
+          root: any,
+          args: Record<string, string>,
+          context: Context
+        ) {
           const list = context.keystone.lists[listKey];
           const itemAPI = context.lists[listKey];
           const tokenType = 'passwordReset';
@@ -135,7 +143,11 @@ export function getPasswordResetSchema({
         },
       },
       Query: {
-        async [gqlNames.validateItemPasswordResetToken](root: any, args: any, context: any) {
+        async [gqlNames.validateItemPasswordResetToken](
+          root: any,
+          args: Record<string, string>,
+          context: Context
+        ) {
           const list = context.keystone.lists[listKey];
           const itemAPI = context.lists[listKey];
           const tokenType = 'passwordReset';

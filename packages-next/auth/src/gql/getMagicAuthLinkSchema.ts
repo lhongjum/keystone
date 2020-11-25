@@ -1,4 +1,4 @@
-import { AuthGqlNames, AuthTokenTypeConfig } from '../types';
+import { AuthGqlNames, AuthTokenTypeConfig, Context } from '../types';
 
 import { updateAuthToken } from '../lib/updateAuthToken';
 import { validateAuthToken } from '../lib/validateAuthToken';
@@ -56,7 +56,11 @@ export function getMagicAuthLinkSchema({
     `,
     resolvers: {
       Mutation: {
-        async [gqlNames.sendItemMagicAuthLink](root: any, args: any, context: any) {
+        async [gqlNames.sendItemMagicAuthLink](
+          root: any,
+          args: Record<string, string>,
+          context: Context
+        ) {
           const list = context.keystone.lists[listKey];
           const itemAPI = context.lists[listKey];
           const tokenType = 'magicAuth';
@@ -80,7 +84,7 @@ export function getMagicAuthLinkSchema({
             // Save the token and related info back to the item
             const { token, itemId } = result;
             await itemAPI.updateOne({
-              id: itemId,
+              id: itemId.toString(),
               data: {
                 [`${tokenType}Token`]: token,
                 [`${tokenType}IssuedAt`]: new Date().toISOString(),
@@ -92,7 +96,11 @@ export function getMagicAuthLinkSchema({
           }
           return null;
         },
-        async [gqlNames.redeemItemMagicAuthToken](root: any, args: any, context: any) {
+        async [gqlNames.redeemItemMagicAuthToken](
+          root: any,
+          args: Record<string, string>,
+          context: Context
+        ) {
           const list = context.keystone.lists[listKey];
           const itemAPI = context.lists[listKey];
           const tokenType = 'magicAuth';
